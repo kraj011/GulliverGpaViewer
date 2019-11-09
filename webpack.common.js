@@ -1,17 +1,26 @@
 const path = require("path");
+var webpack = require('webpack')
+
 
 module.exports = {
   entry: {
     popup: path.join(__dirname, "src/popup/index.tsx"),
-    eventPage: path.join(__dirname, "src/eventPage.ts")
+    background: path.join(__dirname, "src/background.ts"),
+    content: path.join(__dirname, "src/content.ts")
+
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery"
+    })
+  ],
   output: {
     path: path.join(__dirname, "dist/js"),
     filename: "[name].js"
   },
   module: {
-    rules: [
-      {
+    rules: [{
         exclude: /node_modules/,
         test: /\.tsx?$/,
         use: "ts-loader"
@@ -19,8 +28,7 @@ module.exports = {
       {
         exclude: /node_modules/,
         test: /\.scss$/,
-        use: [
-          {
+        use: [{
             loader: "style-loader" // Creates style nodes from JS strings
           },
           {
@@ -30,6 +38,10 @@ module.exports = {
             loader: "sass-loader" // Compiles Sass to CSS
           }
         ]
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       }
     ]
   },

@@ -1,6 +1,7 @@
-# Chrome Extension (built with TypeScript + React)
+# Gulliver GPA Viewer Chrome Extension (built with TypeScript + React)
 
-> This project is a boilerplate project to allow you to quickly build chrome extensions using TypeScript and React.
+> This project allows you to view your GPA below your grades list on veracross student portals.
+> It also will send a notification whenever your grades are updated!
 
 ## Building
 
