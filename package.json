@@ -27,6 +27,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@types/node": "^12.12.7",
     "antd": "^3.25.0",
     "jquery": "^3.4.1",
     "react": "^16.11.0",

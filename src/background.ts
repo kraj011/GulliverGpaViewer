@@ -38,6 +38,7 @@ function pullGrades() {
             return;
           }
           let classes = [];
+          let letterClasses = [];
           // so we got the right response
           for (let i = 0; i < result["courses"].length; i++) {
             classes.push({
@@ -45,21 +46,37 @@ function pullGrades() {
               grade: result["courses"][i]["ptd_grade"]
             });
           }
+          for (let i = 0; i < result["courses"].length; i++) {
+            letterClasses.push({
+              name: result["courses"][i]["description"],
+              grade: result["courses"][i]["ptd_letter_grade"]
+            });
+          }
+          let gradeDifCounter = 0;
           var ba = chrome.browserAction;
           ba.setBadgeBackgroundColor({ color: [255, 0, 0, 128] });
-          ba.setBadgeText({ text: "" + 4 });
           console.log(classes);
           if (localStorage.getItem("currentGrades") !== null) {
             let storedGrades = localStorage.getItem("currentGrades");
             if (storedGrades !== JSON.stringify(classes)) {
               console.log(storedGrades);
-              console.log("GRADES UPDATED!");
+              for (let i = 0; i < classes.length; i++) {
+                if (classes[i]["grade"] !== storedGrades[i]["grade"]) {
+                  gradeDifCounter++;
+                }
+              }
+              ba.setBadgeText({ text: "" + gradeDifCounter });
             }
           }
           localStorage.setItem("currentGrades", JSON.stringify(classes));
+          localStorage.setItem("letterGrades", JSON.stringify(letterClasses));
         },
-        failure: function(error) {}
+        failure: function(error) {
+          console.log("failed");
+        }
       });
+    } else {
+      console.log("non existent cookie?");
     }
   });
 }

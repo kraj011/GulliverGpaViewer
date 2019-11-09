@@ -3,7 +3,7 @@ import $ from "jquery";
 function getGrades() {
   var gradesList = $(".component-class-list-student");
   getCourses(gradesList[0]);
-  insaneMode();
+  // insaneMode();
 }
 
 function getCourses(gradesList) {
@@ -21,6 +21,36 @@ function getCourses(gradesList) {
     }
   }
   calculateGpa(grades);
+}
+
+function calculateGpaFromBackground(grades) {
+  // ap  / IB = two points honors = 1 points boost
+
+  let total = 0.0;
+  let wtotal = 0.0;
+  let classes = grades.length;
+  let totalClassesLength = grades.length;
+  for (let i = 0; i < classes; i++) {
+    grades[i]["grade"]
+      ? (grades[i]["grade"] = grades[i]["grade"].replace(" ", ""))
+      : grades[i]["grade"];
+    var gpaConst = getGpaConst(grades[i]);
+    let wGpaConst = getWeightedGpaConstFromBackground(grades[i]);
+    if (gpaConst !== null && wGpaConst !== null) {
+      total += gpaConst;
+      wtotal += wGpaConst;
+    } else {
+      totalClassesLength--;
+    }
+  }
+  const oldGpa = total / totalClassesLength;
+  const newGpa = Math.round(100 * oldGpa) / 100;
+  const oldWGpa = wtotal / totalClassesLength;
+  const newWGpa = Math.round(100 * oldWGpa) / 100;
+  if (Number.isNaN(newGpa) || Number.isNaN(newWGpa)) {
+    return;
+  }
+  return { weighted: newWGpa, unweighted: newGpa };
 }
 
 function calculateGpa(grades) {
@@ -117,8 +147,56 @@ function getGpaConst(grade) {
   }
 }
 
+function getWeightedGpaConstFromBackground(grade) {
+  const boost = getClassWeight(grade.name);
+  switch (grade.grade) {
+    case "A+":
+      return boost + 4.3;
+
+    case "A":
+      return boost + 4.0;
+
+    case "A-":
+      return boost + 3.7;
+
+    case "B+":
+      return boost + 3.3;
+
+    case "B":
+      return boost + 3.0;
+
+    case "B-":
+      return boost + 2.7;
+
+    case "C+":
+      return boost + 2.3;
+
+    case "C":
+      return boost + 2.0;
+
+    case "C-":
+      return boost + 1.7;
+
+    case "D+":
+      return boost + 1.3;
+
+    case "D":
+      return boost + 1.0;
+
+    case "D-":
+    case "F+":
+    case "F":
+    case "F-":
+      return boost + 0.0;
+
+    default:
+      return null;
+  }
+}
+
 function getWeightedGpaConst(grade) {
   const boost = getClassWeight(grade.class);
+
   switch (grade.grade) {
     case "A+":
       return boost + 4.3;
@@ -197,3 +275,5 @@ function insaneMode() {
 $(document).ready(function() {
   getGrades();
 });
+
+export { calculateGpaFromBackground };

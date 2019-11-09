@@ -1,7 +1,7 @@
 {
     "name": "Veracross GPA Viewer",
     "description": "View your GPA below your grades list on veracross student portals.",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "manifest_version": 2,
     "icons": {
         "16": "icons/icon16.png",
