@@ -1,6 +1,12 @@
 import $ from "jquery";
 
-function getCookies(domain, name, callback) {
+/**
+ * This function is used to get cookies stored in chrome
+ * @param domain  the domain name that the cookie is stored under
+ * @param name    the name of the cookie
+ * @param callback  the callback function to run once this function finishes executing
+ */
+const getCookies = (domain, name, callback) => {
   chrome.cookies.get(
     {
       url: domain,
@@ -12,15 +18,12 @@ function getCookies(domain, name, callback) {
       }
     }
   );
-}
-// chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-//     // usage:
-//     getCookies("https://portals.veracross.com/", "_veracross_session", function (id) {
-//         alert(id);
-//     });
-// })
+};
 
-function pullGrades() {
+/**
+ * This function pulls the grades and handles the response accordingly
+ */
+const pullGrades = () => {
   getCookies("https://portals.veracross.com/", "_veracross_session", function(
     id
   ) {
@@ -66,6 +69,8 @@ function pullGrades() {
                 }
               }
               ba.setBadgeText({ text: "" + gradeDifCounter });
+              // here send the notification saying grade has been updated!
+              sendNotification();
             }
           }
           localStorage.setItem("currentGrades", JSON.stringify(classes));
@@ -79,17 +84,40 @@ function pullGrades() {
       console.log("non existent cookie?");
     }
   });
-}
+};
 
-pullGrades();
+/**
+ * This function uses the built in chrome API to send a local notification
+ * to the user when their grades are updated
+ */
+const sendNotification = () => {
+  let notifOptions = {
+    type: "basic",
+    iconUrl: "../icons/icon48.png",
+    title: "Grades updated!",
+    message:
+      "You're grades have been updated! Open the extension or veracross portal to check!"
+  };
+  chrome.notifications.create("gradeUpdatedNotif", notifOptions);
+};
 
-chrome.alarms.create("pullGrades", {
-  delayInMinutes: 5,
-  periodInMinutes: 5
-});
+/**
+ * This function is what begins the whole life cycle of the extension
+ * and will start doing all background execution ever 3 minutes
+ */
+const start = () => {
+  pullGrades();
 
-chrome.alarms.onAlarm.addListener(function(alarm) {
-  if (alarm.name === "pullGrades") {
-    pullGrades();
-  }
-});
+  chrome.alarms.create("pullGrades", {
+    delayInMinutes: 3,
+    periodInMinutes: 3
+  });
+
+  chrome.alarms.onAlarm.addListener(function(alarm) {
+    if (alarm.name === "pullGrades") {
+      pullGrades();
+    }
+  });
+};
+
+start();

@@ -38,6 +38,9 @@ export default class Popup extends React.Component<AppProps, AppState> {
     // chrome.runtime.sendMessage({ popupMounted: true });
     this.initGrades();
     this.pullGpa();
+    // reset badge once they open the extension
+    var ba = chrome.browserAction;
+    ba.setBadgeText({ text: "" });
   }
 
   initGrades() {

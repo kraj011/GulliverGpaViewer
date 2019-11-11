@@ -18,7 +18,8 @@
         "tabs",
         "alarms",
         "cookies",
-        "https://*.veracross.com/"
+        "https://*.veracross.com/",
+        "notifications"
     ],
     "content_scripts": [{
         "matches": ["https://portals.veracross.com/gulliver/student"],
