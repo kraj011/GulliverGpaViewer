@@ -22,7 +22,7 @@
         "notifications"
     ],
     "content_scripts": [{
-        "matches": ["https://portals.veracross.com/gulliver/student"],
+        "matches": ["https://portals.veracross.com/gulliver/student", "https://accounts.veracross.com/gulliver/portals/login"],
         "js": ["./js/content.js"]
     }],
     "background": {

@@ -29,18 +29,31 @@ export default class Popup extends React.Component<AppProps, AppState> {
     this.state = {
       dataSource: [],
       unweightedGpa: 0.0,
-      weightedGpa: 0.0
+      weightedGpa: 0.0,
+      sessionExpired: false
     };
   }
 
   componentDidMount() {
     // Example of how to send a message to eventPage.ts.
     // chrome.runtime.sendMessage({ popupMounted: true });
-    this.initGrades();
-    this.pullGpa();
+    let sessionExpiredBool = this.checkSession();
+    this.setState({ sessionExpired: sessionExpiredBool });
+    if (!sessionExpiredBool) {
+      this.initGrades();
+      this.pullGpa();
+    }
     // reset badge once they open the extension
     var ba = chrome.browserAction;
     ba.setBadgeText({ text: "" });
+  }
+
+  checkSession() {
+    let sessionExpired = localStorage.getItem("sessionExpired");
+    if (sessionExpired === "true") {
+      return true;
+    }
+    return false;
   }
 
   initGrades() {
@@ -73,7 +86,7 @@ export default class Popup extends React.Component<AppProps, AppState> {
     }
   }
 
-  render() {
+  GradesTable() {
     return (
       <div>
         <div className="popupContainer">
@@ -95,5 +108,55 @@ export default class Popup extends React.Component<AppProps, AppState> {
         </div>
       </div>
     );
+  }
+
+  ErrorText() {
+    return (
+      <div>
+        <h1>Session Expired! Please login to veracross!</h1>
+      </div>
+    );
+  }
+
+  openLoginPage() {
+    let newURL = "https://accounts.veracross.com/gulliver/portals/login";
+    chrome.tabs.create({ url: newURL });
+  }
+
+  render() {
+    console.log(this.state["sessionExpired"]);
+    if (this.state["sessionExpired"] == true) {
+      return (
+        <div>
+          <h1>
+            Session Expired! Please login to{" "}
+            <a onClick={this.openLoginPage}>Veracross </a>
+            to continue running this extension!
+          </h1>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <div className="popupContainer">
+            <Table
+              dataSource={this.state["dataSource"]}
+              columns={columns}
+              pagination={false}
+            />
+          </div>
+          <br />
+          <br />
+          <div className="gpaContainer">
+            <Tag color="red">
+              Current Unweighted GPA: {this.state["unweightedGpa"]}
+            </Tag>
+            <Tag color="green">
+              Current Weighted GPA: {this.state["weightedGpa"]}
+            </Tag>
+          </div>
+        </div>
+      );
+    }
   }
 }

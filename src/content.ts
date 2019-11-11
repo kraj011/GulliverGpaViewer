@@ -5,6 +5,7 @@ import $ from "jquery";
  * from the page and starting to parse them
  */
 const getGrades = () => {
+  localStorage.setItem("sessionExpired", "false");
   var gradesList = $(".component-class-list-student");
   getCourses(gradesList[0]);
   // insaneMode = () => ;
@@ -311,7 +312,12 @@ const insaneMode = () => {
 };
 
 $(document).ready(() => {
-  getGrades();
+  console.log(window.location.href);
+  if (window.location.href.includes("login")) {
+    localStorage.setItem("sessionExpired", "true");
+  } else {
+    getGrades();
+  }
 });
 
 export { calculateGpaFromBackground };

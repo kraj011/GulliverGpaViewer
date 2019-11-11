@@ -38,8 +38,10 @@ const pullGrades = () => {
         },
         success: function(result) {
           if (typeof result != typeof JSON) {
+            localStorage.setItem("sessionExpired", "true");
             return;
           }
+          localStorage.setItem("sessionExpired", "false");
           let classes = [];
           let letterClasses = [];
           // so we got the right response
@@ -78,10 +80,12 @@ const pullGrades = () => {
         },
         failure: function(error) {
           console.log("failed");
+          localStorage.setItem("sessionExpired", "true");
         }
       });
     } else {
       console.log("non existent cookie?");
+      localStorage.setItem("sessionExpired", "true");
     }
   });
 };
