@@ -58,7 +58,7 @@ const pullGrades = () => {
           let gradeDifCounter = 0;
           var ba = chrome.browserAction;
           ba.setBadgeBackgroundColor({ color: [255, 0, 0, 128] });
-          console.log(classes);
+          console.log(`[${getTime()}]`, classes);
           if (localStorage.getItem("currentGrades") !== null) {
             let storedGrades = localStorage.getItem("currentGrades");
             if (storedGrades !== JSON.stringify(classes)) {
@@ -99,6 +99,14 @@ const sendNotification = () => {
       "You're grades have been updated! Open the extension or veracross portal to check!"
   };
   chrome.notifications.create("gradeUpdatedNotif", notifOptions);
+};
+
+/**
+ * Simple method for getting a formatted time string
+ */
+const getTime = () => {
+  var d = new Date();
+  return `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
 };
 
 /**
